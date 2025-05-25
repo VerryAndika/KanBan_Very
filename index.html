@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Jadwal Kuliah PTI Semester 2</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #fff;
+      padding: 20px;
+      color: #222;
+      margin: 0;
+    }
+
+    h2 {
+      text-align: center;
+      margin-bottom: 24px;
+      color: #222;
+      font-weight: 600;
+    }
+
+    .table-wrapper {
+      overflow-x: auto;
+      box-shadow: 0 0 6px rgba(0,0,0,0.05);
+      border-radius: 6px;
+      border: 1px solid #ddd;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      min-width: 800px;
+      background-color: #fff;
+    }
+
+    th, td {
+      border: 1px solid #ddd;
+      padding: 12px 10px;
+      text-align: center;
+      vertical-align: middle;
+      position: relative;
+      font-size: 0.9rem;
+      user-select: none;
+      transition: background-color 0.15s ease;
+    }
+
+    th {
+      background-color: #f3f4f6; /* abu sangat terang */
+      color: #555;
+      font-weight: 700;
+    }
+
+    tbody tr:hover {
+      background-color: #f9fafb;
+    }
+
+    .highlight {
+      background-color: #f0f4f8; /* abu biru sangat soft */
+      cursor: pointer;
+      border-left: 3px solid #a0aec0;
+      transition: background-color 0.2s ease, border-left-color 0.2s ease;
+    }
+
+    .highlight:hover {
+      background-color: #e2e8f0; /* lebih terang */
+      border-left-color: #4a5568; /* biru abu gelap */
+    }
+
+    .highlight:active {
+      background-color: #cbd5e1; /* warna tekan klik */
+      border-left-color: #2d3748; /* biru abu lebih gelap */
+    }
+
+    .matkul {
+      font-weight: 600;
+      font-size: 1rem;
+      margin-bottom: 4px;
+      color: #2d3748;
+    }
+
+    .dosen, .ruang {
+      font-size: 0.85rem;
+      margin-top: 2px;
+      color: #4a5568;
+    }
+    .ruang {
+      font-style: italic;
+    }
+
+    /* Tooltip styling */
+    .highlight:hover::after {
+      content: attr(data-tooltip);
+      position: absolute;
+      bottom: 110%;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #2d3748;
+      color: #fff;
+      padding: 6px 10px;
+      border-radius: 4px;
+      white-space: nowrap;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
+      pointer-events: none;
+      opacity: 1;
+      transition: opacity 0.2s ease-in-out;
+      z-index: 10;
+    }
+
+    .highlight::after {
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s ease-in-out;
+    }
+
+    @media (max-width: 600px) {
+      body {
+        padding: 10px;
+      }
+      .matkul {
+        font-size: 0.95rem;
+      }
+      th, td {
+        padding: 10px 6px;
+        font-size: 0.8rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <h2>JADWAL PERKULIAHAN PTI IKI SEMESTER II </h2>
+
+  <div class="table-wrapper">
+    <table>
+      <thead>
+        <tr>
+          <th>Hari / Jam</th>
+          <th>A<br>7:30–8:30</th>
+          <th>B<br>8:30–9:30</th>
+          <th>C<br>9:30–10:30</th>
+          <th>D<br>10:30–11:30</th>
+          <th>E<br>11:30–12:30</th>
+          <th>F<br>12:30–13:30</th>
+          <th>G<br>13:30–14:30</th>
+          <th>H<br>14:30–15:30</th>
+          <th>I<br>15:30–16:30</th>
+          <th>J<br>16:30–17:30</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Senin</strong></td>
+          <td colspan="2"></td>
+          <td colspan="2" class="highlight" data-tooltip="Dosen: Prof. Dr. I Wayan Santyasa, M.Si. | Ruang: Online">
+            <div class="matkul">Agama Hindu</div>
+            <div class="dosen">Prof. Dr. I Wayan Santyasa, M.Si.</div>
+            <div class="ruang">Online</div>
+          </td>
+          <td colspan="6" class="highlight" data-tooltip="Dosen: Dr. I Nyoman Yasa, S.Pd., M.A. | Ruang: Online">
+            <div class="matkul">Bahasa Indonesia</div>
+            <div class="dosen">Dr. I Nyoman Yasa, S.Pd., M.A.</div>
+            <div class="ruang">Online</div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Selasa</strong></td>
+          <td colspan="6"></td>
+          <td colspan="2" class="highlight" data-tooltip="Dosen: Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng. | Ruang: FTK.E.2.05 - Ruang Kuliah PTI">
+            <div class="matkul">Didaktik Metodik Pembelajaran Informatika</div>
+            <div class="dosen">Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng.</div>
+            <div class="ruang">FTK.E.2.05 - Ruang Kuliah PTI</div>
+          </td>
+          <td colspan="2" class="highlight" data-tooltip="Dosen: I Nyoman Indhi Wiradika, M.Pd. | Ruang: FTK.E.2.02 - Ruang Kuliah SI">
+            <div class="matkul">Asesmen dan Evaluasi Pembelajaran TI</div>
+            <div class="dosen">I Nyoman Indhi Wiradika, M.Pd.</div>
+            <div class="ruang">FTK.E.2.02 - Ruang Kuliah SI</div>
+          </td>
+        </tr>
+        <tr>
+          <td><strong>Rabu</strong></td>
+          <td colspan="3" class="highlight" data-tooltip="Dosen: Luh Putu Eka Damayanthi, S.Pd., M.Pd. | Ruang: FTK.G.2.05 - Ruang Kuliah TPRL JD 5">
+            <div class="matkul">Sistem Informasi</div>
+            <div class="dosen">Luh Putu Eka Damayanthi, S.Pd., M.Pd.</div>
+            <div class="ruang">FTK.G.2.05 - Ruang Kuliah TPRL JD 5</div>
+          </td>
+          <td colspan="3" class="highlight" data-tooltip="Dosen: I Gede Bendesa Subawa, S.Pd., M.Kom. | Ruang: FTK.F.3.06.L - Lab Komputer TI 1">
+            <div class="matkul">Algoritma dan Pemrograman</div>
+            <div class="dosen">I Gede Bendesa Subawa, S.Pd., M.Kom.</div>
+            <div class="ruang">FTK.F.3.06.L - Lab Komputer TI 1</div>
+          </td>
+          <td colspan="2" class="highlight" data-tooltip="Dosen: Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng. | Ruang: FTK.F.3.08.L - Lab Komputer TI 3">
+            <div class="matkul">Belajar dan Pembelajaran</div>
+            <div class="dosen">Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng.</div>
+            <div class="ruang">FTK.F.3.08.L - Lab Komputer TI 3</div>
+          </td>
+          <td></td>
+        </tr>
+        <tr>
+          <td><strong>Kamis</strong></td>
+          <td colspan="3" class="highlight" data-tooltip="Dosen: Dr. Ni Ketut Widiartini, S.Pd., M.Pd. | Ruang: FTK.F.3.01 - Ruang Kuliah PTI JD 6">
+            <div class="matkul">Statistika Dasar</div>
+            <div class="dosen">Dr. Ni Ketut Widiartini, S.Pd., M.Pd.</div>
+            <div class="ruang">FTK.F.3.01 - Ruang Kuliah PTI JD 6</div>
+          </td>
+          <td colspan="7"></td>
+        </tr>
+        <tr>
+          <td><strong>Jumat</strong></td>
+          <td colspan="2" class="highlight" data-tooltip="Dosen: Luh Putu Eka Damayanthi, S.Pd., M.Pd. | Ruang: FTK.F.3.09.L - Lab Komputer TI 4">
+            <div class="matkul">UI/UX</div>
+            <div class="dosen">Luh Putu Eka Damayanthi, S.Pd., M.Pd.</div>
+            <div class="ruang">FTK.F.3.09.L - Lab Komputer TI 4</div>
+          </td>
+          <td colspan="3" class="highlight" data-tooltip="Dosen: I. Gusti Ayu Agung Diatri Indrawati, S.Kom., M.T. | Ruang: FTK.F.3.09.L - Lab Komputer TI 4">
+            <div class="matkul">Basis Data</div>
+            <div class="dosen">I. Gusti Ayu Agung Diatri Indrawati, S.Kom., M.T.</div>
+            <div class="ruang">FTK.F.3.09.L - Lab Komputer TI 4</div>
+          </td>
+          <td colspan="5"></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</body>
+</html>
+
+
