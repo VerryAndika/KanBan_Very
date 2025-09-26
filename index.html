@@ -1,228 +1,390 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Jadwal Kuliah PTI Semester 2</title>
-  <style>
-    body {
-      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-      background: #fff;
-      padding: 20px;
-      color: #222;
-      margin: 0;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Kanban Mini — Very</title>
+<style>
+  :root{
+    --bg:#fbfbfa;
+    --card-bg:#ffffff;
+    --muted:#7b7b7b;
+    --border:#e6e4e2;
+    --accent:#111827;
+    --col-backlog: #f6f0ee;
+    --col-todo: #f7fbf8;
+    --col-doing: #fffaf6;
+    --col-done: #f6fbff;
+    --recurring: #9fc5e8; /* blue */
+    --oneoff: #f4a6b1;    /* pink */
+    --special: #f7db7b;   /* yellow */
+    --shadow: 0 6px 18px rgba(17,24,39,0.06);
+    font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
 
-    h2 {
-      text-align: center;
-      margin-bottom: 24px;
-      color: #222;
-      font-weight: 600;
-    }
+  html,body{height:100%;margin:0;background:var(--bg);color:#111;}
+  .app{
+    max-width:1200px;margin:20px auto;padding:20px;
+    display:flex;flex-direction:column;gap:18px;
+  }
 
-    .table-wrapper {
-      overflow-x: auto;
-      box-shadow: 0 0 6px rgba(0,0,0,0.05);
-      border-radius: 6px;
-      border: 1px solid #ddd;
-    }
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px;}
+  .title{
+    display:flex;gap:12px;align-items:center;
+  }
+  .brand{
+    background:linear-gradient(135deg,#111827,#374151);
+    color:white;padding:10px 14px;border-radius:10px;font-weight:700;
+    box-shadow:var(--shadow);
+  }
+  h1{margin:0;font-size:18px;}
+  p.lead{margin:0;color:var(--muted);font-size:13px;}
 
-    table {
-      border-collapse: collapse;
-      width: 100%;
-      min-width: 800px;
-      background-color: #fff;
-    }
+  /* Controls */
+  .controls{
+    display:flex;gap:12px;align-items:center;flex-wrap:wrap;
+  }
+  .form{
+    background:var(--card-bg);padding:12px;border-radius:10px;border:1px solid var(--border);
+    box-shadow:var(--shadow);display:flex;gap:10px;align-items:center;
+  }
+  .form input[type="text"], .form input[type="date"], .form select{
+    padding:8px;border-radius:8px;border:1px solid var(--border);outline:none;font-size:13px;
+  }
+  .form button{
+    padding:8px 12px;border-radius:8px;border:none;background:#111827;color:white;font-weight:600;cursor:pointer;
+  }
 
-    th, td {
-      border: 1px solid #ddd;
-      padding: 12px 10px;
-      text-align: center;
-      vertical-align: middle;
-      position: relative;
-      font-size: 0.9rem;
-      user-select: none;
-      transition: background-color 0.15s ease;
-    }
+  /* Board grid with swimlanes */
+  .board{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap:12px;
+  }
+  .column{
+    background:var(--card-bg);border-radius:12px;padding:12px;border:1px solid var(--border);
+    min-height:320px;display:flex;flex-direction:column;gap:8px;
+  }
+  .col-header{display:flex;justify-content:space-between;align-items:center;font-weight:700;padding-bottom:6px;border-bottom:1px dashed var(--border);font-size:14px;}
+  .lane{
+    margin-top:8px;border-radius:8px;padding:8px;border:1px solid transparent;min-height:120px;
+    display:flex;flex-direction:column;gap:8px;
+    transition:background .15s,border-color .15s;
+  }
+  .lane.hygiene{background:linear-gradient(180deg, rgba(249,250,251,0.9), rgba(255,255,255,0));}
+  .lane.develop{background:linear-gradient(180deg, rgba(255,255,255,0), rgba(249,249,250,0.6));}
 
-    th {
-      background-color: #f3f4f6; /* abu sangat terang */
-      color: #555;
-      font-weight: 700;
-    }
+  /* card */
+  .task{
+    background:var(--card-bg);border-radius:10px;padding:8px;border:1px solid var(--border);
+    cursor:grab;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;
+  }
+  .task:active{cursor:grabbing;}
+  .task .top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;}
+  .task .title{font-weight:700;font-size:13px;word-break:break-word;}
+  .task .meta{font-size:12px;color:var(--muted);}
+  .task .tags{display:flex;gap:6px;align-items:center;flex-wrap:wrap;}
+  .pill{padding:4px 8px;border-radius:999px;font-size:11px;border:1px solid rgba(0,0,0,0.05);display:inline-flex;align-items:center;gap:6px;}
+  .color-rec{background:var(--recurring);border:1px solid rgba(0,0,0,0.06);}
+  .color-one{background:var(--oneoff);border:1px solid rgba(0,0,0,0.06);}
+  .color-sp{background:var(--special);border:1px solid rgba(0,0,0,0.06);}
+  .task .actions{display:flex;gap:6px;align-items:center;}
+  .btn-ghost{background:transparent;border:none;color:var(--muted);cursor:pointer;padding:6px;border-radius:8px;}
+  .small{font-size:12px;padding:6px 8px;border-radius:8px;border:1px solid var(--border);background:#fff;}
 
-    tbody tr:hover {
-      background-color: #f9fafb;
-    }
+  /* drag over highlight */
+  .lane.drag-over{border:2px dashed rgba(17,24,39,0.12);background:linear-gradient(180deg, rgba(249,250,251,0.6), rgba(255,255,255,0.1));}
 
-    .highlight {
-      background-color: #f0f4f8; /* abu biru sangat soft */
-      cursor: pointer;
-      border-left: 3px solid #a0aec0;
-      transition: background-color 0.2s ease, border-left-color 0.2s ease;
-    }
+  footer{display:flex;justify-content:space-between;align-items:center;padding-top:4px;color:var(--muted);font-size:13px;}
 
-    .highlight:hover {
-      background-color: #e2e8f0; /* lebih terang */
-      border-left-color: #4a5568; /* biru abu gelap */
-    }
+  /* legend */
+  .legend{display:flex;gap:8px;align-items:center;}
+  .legend .item{display:flex;gap:8px;align-items:center;font-size:13px;color:var(--muted);}
+  .swim-label{writing-mode:vertical-rl;text-orientation:mixed;font-weight:700;color:var(--muted);font-size:12px;padding:6px;}
 
-    .highlight:active {
-      background-color: #cbd5e1; /* warna tekan klik */
-      border-left-color: #2d3748; /* biru abu lebih gelap */
-    }
-
-    .matkul {
-      font-weight: 600;
-      font-size: 1rem;
-      margin-bottom: 4px;
-      color: #2d3748;
-    }
-
-    .dosen, .ruang {
-      font-size: 0.85rem;
-      margin-top: 2px;
-      color: #4a5568;
-    }
-    .ruang {
-      font-style: italic;
-    }
-
-    /* Tooltip styling */
-    .highlight:hover::after {
-      content: attr(data-tooltip);
-      position: absolute;
-      bottom: 110%;
-      left: 50%;
-      transform: translateX(-50%);
-      background: #2d3748;
-      color: #fff;
-      padding: 6px 10px;
-      border-radius: 4px;
-      white-space: nowrap;
-      font-size: 0.85rem;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.2);
-      pointer-events: none;
-      opacity: 1;
-      transition: opacity 0.2s ease-in-out;
-      z-index: 10;
-    }
-
-    .highlight::after {
-      opacity: 0;
-      pointer-events: none;
-      transition: opacity 0.2s ease-in-out;
-    }
-
-    @media (max-width: 600px) {
-      body {
-        padding: 10px;
-      }
-      .matkul {
-        font-size: 0.95rem;
-      }
-      th, td {
-        padding: 10px 6px;
-        font-size: 0.8rem;
-      }
-    }
-  </style>
+  /* responsive */
+  @media (max-width:980px){
+    .board{grid-template-columns: repeat(2, 1fr);}
+  }
+  @media (max-width:560px){
+    .board{grid-template-columns: 1fr;}
+    .form{flex-direction:column;align-items:stretch;}
+    .controls{justify-content:stretch;}
+  }
+</style>
 </head>
 <body>
-  <h2>JADWAL PERKULIAHAN PTI IKI SEMESTER II </h2>
+<div class="app" role="application" aria-label="Kanban board Very">
+  <header>
+    <div class="title">
+      <div class="brand">Edu-Kanban</div>
+      <div>
+        <h1>Kanban Mini — Very</h1>
+        <p class="lead">Backlog → To Do → Doing → Done. Drag & drop, buat tugas, simpan otomatis. 💫</p>
+      </div>
+    </div>
 
-  <div class="table-wrapper">
-    <table>
-      <thead>
-        <tr>
-          <th>Hari / Jam</th>
-          <th>A<br>7:30–8:30</th>
-          <th>B<br>8:30–9:30</th>
-          <th>C<br>9:30–10:30</th>
-          <th>D<br>10:30–11:30</th>
-          <th>E<br>11:30–12:30</th>
-          <th>F<br>12:30–13:30</th>
-          <th>G<br>13:30–14:30</th>
-          <th>H<br>14:30–15:30</th>
-          <th>I<br>15:30–16:30</th>
-          <th>J<br>16:30–17:30</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td><strong>Senin</strong></td>
-          <td colspan="2"></td>
-          <td colspan="2" class="highlight" data-tooltip="Dosen: Prof. Dr. I Wayan Santyasa, M.Si. | Ruang: Online">
-            <div class="matkul">Agama Hindu</div>
-            <div class="dosen">Prof. Dr. I Wayan Santyasa, M.Si.</div>
-            <div class="ruang">Online</div>
-          </td>
-          <td colspan="6" class="highlight" data-tooltip="Dosen: Dr. I Nyoman Yasa, S.Pd., M.A. | Ruang: Online">
-            <div class="matkul">Bahasa Indonesia</div>
-            <div class="dosen">Dr. I Nyoman Yasa, S.Pd., M.A.</div>
-            <div class="ruang">Online</div>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Selasa</strong></td>
-          <td colspan="6"></td>
-          <td colspan="2" class="highlight" data-tooltip="Dosen: Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng. | Ruang: FTK.E.2.05 - Ruang Kuliah PTI">
-            <div class="matkul">Didaktik Metodik Pembelajaran Informatika</div>
-            <div class="dosen">Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng.</div>
-            <div class="ruang">FTK.E.2.05 - Ruang Kuliah PTI</div>
-          </td>
-          <td colspan="2" class="highlight" data-tooltip="Dosen: I Nyoman Indhi Wiradika, M.Pd. | Ruang: FTK.E.2.02 - Ruang Kuliah SI">
-            <div class="matkul">Asesmen dan Evaluasi Pembelajaran TI</div>
-            <div class="dosen">I Nyoman Indhi Wiradika, M.Pd.</div>
-            <div class="ruang">FTK.E.2.02 - Ruang Kuliah SI</div>
-          </td>
-        </tr>
-        <tr>
-          <td><strong>Rabu</strong></td>
-          <td colspan="3" class="highlight" data-tooltip="Dosen: Luh Putu Eka Damayanthi, S.Pd., M.Pd. | Ruang: FTK.G.2.05 - Ruang Kuliah TPRL JD 5">
-            <div class="matkul">Sistem Informasi</div>
-            <div class="dosen">Luh Putu Eka Damayanthi, S.Pd., M.Pd.</div>
-            <div class="ruang">FTK.G.2.05 - Ruang Kuliah TPRL JD 5</div>
-          </td>
-          <td colspan="3" class="highlight" data-tooltip="Dosen: I Gede Bendesa Subawa, S.Pd., M.Kom. | Ruang: FTK.F.3.06.L - Lab Komputer TI 1">
-            <div class="matkul">Algoritma dan Pemrograman</div>
-            <div class="dosen">I Gede Bendesa Subawa, S.Pd., M.Kom.</div>
-            <div class="ruang">FTK.F.3.06.L - Lab Komputer TI 1</div>
-          </td>
-          <td colspan="2" class="highlight" data-tooltip="Dosen: Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng. | Ruang: FTK.F.3.08.L - Lab Komputer TI 3">
-            <div class="matkul">Belajar dan Pembelajaran</div>
-            <div class="dosen">Dr. phil. Dessy Seri Wahyuni, S.Kom., M.Eng.</div>
-            <div class="ruang">FTK.F.3.08.L - Lab Komputer TI 3</div>
-          </td>
-          <td></td>
-        </tr>
-        <tr>
-          <td><strong>Kamis</strong></td>
-          <td colspan="3" class="highlight" data-tooltip="Dosen: Dr. Ni Ketut Widiartini, S.Pd., M.Pd. | Ruang: FTK.F.3.01 - Ruang Kuliah PTI JD 6">
-            <div class="matkul">Statistika Dasar</div>
-            <div class="dosen">Dr. Ni Ketut Widiartini, S.Pd., M.Pd.</div>
-            <div class="ruang">FTK.F.3.01 - Ruang Kuliah PTI JD 6</div>
-          </td>
-          <td colspan="7"></td>
-        </tr>
-        <tr>
-          <td><strong>Jumat</strong></td>
-          <td colspan="2" class="highlight" data-tooltip="Dosen: Luh Putu Eka Damayanthi, S.Pd., M.Pd. | Ruang: FTK.F.3.09.L - Lab Komputer TI 4">
-            <div class="matkul">UI/UX</div>
-            <div class="dosen">Luh Putu Eka Damayanthi, S.Pd., M.Pd.</div>
-            <div class="ruang">FTK.F.3.09.L - Lab Komputer TI 4</div>
-          </td>
-          <td colspan="3" class="highlight" data-tooltip="Dosen: I. Gusti Ayu Agung Diatri Indrawati, S.Kom., M.T. | Ruang: FTK.F.3.09.L - Lab Komputer TI 4">
-            <div class="matkul">Basis Data</div>
-            <div class="dosen">I. Gusti Ayu Agung Diatri Indrawati, S.Kom., M.T.</div>
-            <div class="ruang">FTK.F.3.09.L - Lab Komputer TI 4</div>
-          </td>
-          <td colspan="5"></td>
-        </tr>
-      </tbody>
-    </table>
-  </div>
+    <div class="controls">
+      <form id="createForm" class="form" onsubmit="return false;" aria-label="Tambah tugas">
+        <input id="taskTitle" type="text" placeholder="Judul tugas..." required />
+        <select id="taskType" aria-label="Tipe tugas">
+          <option value="recurring">Recurring</option>
+          <option value="oneoff">One Off</option>
+          <option value="special">Special</option>
+        </select>
+        <input id="taskDeadline" type="date" aria-label="Deadline (opsional)"/>
+        <select id="taskLane" aria-label="Pilih swimlane">
+          <option value="hygiene">Hygiene</option>
+          <option value="develop">Develop</option>
+        </select>
+        <button id="addBtn">Tambah</button>
+      </form>
+
+      <div class="legend" title="Keterangan warna">
+        <div class="item"><span class="pill color-rec"> </span>Recurring</div>
+        <div class="item"><span class="pill color-one"> </span>One Off</div>
+        <div class="item"><span class="pill color-sp"> </span>Special</div>
+        <button id="clearBtn" class="small" title="Hapus semua (localStorage)">Hapus Semua</button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="board" aria-live="polite">
+
+      <!-- Column: Backlog -->
+      <div class="column" data-col="backlog" aria-label="Backlog">
+        <div class="col-header"><span>BACKLOG</span><span class="swim-label" style="opacity:.5">Kolom</span></div>
+        <div class="lane hygiene" data-lane="hygiene" ondragover="return false"></div>
+        <div class="lane develop" data-lane="develop" ondragover="return false"></div>
+      </div>
+
+      <!-- To Do -->
+      <div class="column" data-col="todo" aria-label="To Do">
+        <div class="col-header"><span>TO DO</span></div>
+        <div class="lane hygiene" data-lane="hygiene"></div>
+        <div class="lane develop" data-lane="develop"></div>
+      </div>
+
+      <!-- Doing -->
+      <div class="column" data-col="doing" aria-label="Doing">
+        <div class="col-header"><span>DOING</span></div>
+        <div class="lane hygiene" data-lane="hygiene"></div>
+        <div class="lane develop" data-lane="develop"></div>
+      </div>
+
+      <!-- Done -->
+      <div class="column" data-col="done" aria-label="Done">
+        <div class="col-header"><span>DONE</span></div>
+        <div class="lane hygiene" data-lane="hygiene"></div>
+        <div class="lane develop" data-lane="develop"></div>
+      </div>
+
+    </section>
+  </main>
+
+  <footer>
+    <div>Made for Very • Kanban sederhana • Data disimpan lokal (browser)</div>
+    <div style="font-size:12px;color:var(--muted)">Tips: Drag kartu antar kolom / lane. Klik edit untuk ubah. ❤</div>
+  </footer>
+</div>
+
+<script>
+/* ---------- Data model + Persistence ---------- */
+const STORAGE_KEY = 'very_kanban_v1';
+
+let board = {
+  tasks: {} // id => task object
+};
+
+// default sample tasks
+const SAMPLE = () => {
+  const id = generateId();
+  return {
+    [id]: { id, title: 'Contoh: Bersihkan data user', col:'backlog', lane:'hygiene', type:'oneoff', deadline: null, created: Date.now() }
+  };
+};
+
+function save(){
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(board));
+}
+function load(){
+  const raw = localStorage.getItem(STORAGE_KEY);
+  if(raw){
+    try{
+      board = JSON.parse(raw);
+    }catch(e){
+      console.warn('gagal parse storage, reset',e);
+      board = {tasks:{}};
+    }
+  } else {
+    board = {tasks: {...SAMPLE()}};
+    save();
+  }
+}
+
+/* ---------- Utilities ---------- */
+function generateId(){ return 't_' + Math.random().toString(36).slice(2,9); }
+function createTaskElement(task){
+  const el = document.createElement('article');
+  el.className = 'task';
+  el.draggable = true;
+  el.dataset.id = task.id;
+  el.innerHTML = `
+    <div class="top">
+      <div>
+        <div class="title">${escapeHtml(task.title)}</div>
+        <div class="meta">${task.deadline ? 'Deadline: ' + escapeHtml(task.deadline) : ''}</div>
+      </div>
+      <div class="actions">
+        <button class="btn-ghost edit" title="Edit">✏</button>
+        <button class="btn-ghost del" title="Hapus">🗑</button>
+      </div>
+    </div>
+    <div class="tags">
+      <span class="pill ${typeClass(task.type)}">${typeLabel(task.type)}</span>
+      <span class="pill" style="background:transparent;border:1px dashed var(--border)">${task.col.toUpperCase()}</span>
+    </div>
+  `;
+
+  // drag handlers
+  el.addEventListener('dragstart', (e)=>{
+    e.dataTransfer.setData('text/plain', task.id);
+    requestAnimationFrame(()=>el.style.opacity = '0.6');
+  });
+  el.addEventListener('dragend', (e)=>{
+    el.style.opacity = '';
+  });
+
+  // edit & delete
+  el.querySelector('.edit').addEventListener('click', ()=> openEditDialog(task.id));
+  el.querySelector('.del').addEventListener('click', ()=> {
+    if(confirm('Hapus tugas ini?')) {
+      delete board.tasks[task.id];
+      render();
+      save();
+    }
+  });
+
+  return el;
+}
+
+function typeClass(t){
+  if(t==='recurring') return 'color-rec';
+  if(t==='oneoff') return 'color-one';
+  return 'color-sp';
+}
+function typeLabel(t){
+  if(t==='recurring') return 'Recurring';
+  if(t==='oneoff') return 'One-Off';
+  return 'Special';
+}
+function escapeHtml(s){ return String(s).replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;'); }
+
+/* ---------- Rendering ---------- */
+function render(){
+  // clear lanes
+  const laneEls = document.querySelectorAll('.lane');
+  laneEls.forEach(l => l.innerHTML = '');
+
+  // sort tasks by created asc
+  const tasks = Object.values(board.tasks).sort((a,b)=>a.created - b.created);
+  tasks.forEach(task => {
+    const selector = `.column[data-col="${task.col}"] .lane[data-lane="${task.lane}"]`;
+    const laneEl = document.querySelector(selector);
+    if(laneEl) laneEl.appendChild(createTaskElement(task));
+  });
+}
+
+/* ---------- Create / Edit ---------- */
+const form = document.getElementById('createForm');
+const tTitle = document.getElementById('taskTitle');
+const tType = document.getElementById('taskType');
+const tDeadline = document.getElementById('taskDeadline');
+const tLane = document.getElementById('taskLane');
+const addBtn = document.getElementById('addBtn');
+const clearBtn = document.getElementById('clearBtn');
+
+addBtn.addEventListener('click', ()=> {
+  const title = tTitle.value.trim();
+  if(!title) return alert('Isi judul tugas dulu.');
+  const id = generateId();
+  board.tasks[id] = {
+    id, title, col:'backlog', lane: tLane.value, type: tType.value, deadline: tDeadline.value || null, created: Date.now()
+  };
+  tTitle.value=''; tDeadline.value=''; tType.value='recurring';
+  render(); save();
+});
+
+// clear storage
+clearBtn.addEventListener('click', ()=> {
+  if(confirm('Hapus semua data lokal? (tidak bisa dikembalikan)')) {
+    localStorage.removeItem(STORAGE_KEY);
+    load(); render();
+  }
+});
+
+// edit dialog (simple prompt-based UX)
+function openEditDialog(id){
+  const task = board.tasks[id];
+  if(!task) return;
+  const newTitle = prompt('Ubah judul tugas:', task.title);
+  if(newTitle === null) return; // cancel
+  task.title = newTitle.trim() || task.title;
+  const newType = prompt('Tipe (recurring / oneoff / special):', task.type);
+  if(newType && ['recurring','oneoff','special'].includes(newType)) task.type = newType;
+  const newDeadline = prompt('Deadline (YYYY-MM-DD) atau kosongkan:', task.deadline || '');
+  task.deadline = newDeadline ? newDeadline : null;
+  const newCol = prompt('Kolom (backlog / todo / doing / done):', task.col);
+  if(newCol && ['backlog','todo','doing','done'].includes(newCol)) task.col = newCol;
+  const newLane = prompt('Lane (hygiene / develop):', task.lane);
+  if(newLane && ['hygiene','develop'].includes(newLane)) task.lane = newLane;
+  render(); save();
+}
+
+/* ---------- Drag & Drop on lanes ---------- */
+function setupDragAndDrop(){
+  const lanes = document.querySelectorAll('.lane');
+  lanes.forEach(lane => {
+    lane.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      lane.classList.add('drag-over');
+    });
+    lane.addEventListener('dragleave', ()=> lane.classList.remove('drag-over'));
+    lane.addEventListener('drop', (e)=>{
+      e.preventDefault();
+      lane.classList.remove('drag-over');
+      const id = e.dataTransfer.getData('text/plain');
+      const task = board.tasks[id];
+      if(!task) return;
+      const colEl = lane.closest('.column');
+      if(!colEl) return;
+      const newCol = colEl.dataset.col;
+      const newLane = lane.dataset.lane;
+      task.col = newCol;
+      task.lane = newLane;
+      task.created = task.created || Date.now();
+      render();
+      save();
+    });
+  });
+}
+
+/* ---------- Initialization ---------- */
+load();
+render();
+setupDragAndDrop();
+
+// Keep dragdrop working after dynamic render
+const observer = new MutationObserver(()=> setupDragAndDrop());
+observer.observe(document.querySelector('.board'), { childList:true, subtree:true });
+
+// Accessibility: Enter = add task
+document.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter' && document.activeElement === tTitle){
+    addBtn.click();
+  }
+});
+</script>
 </body>
 </html>
-
-
